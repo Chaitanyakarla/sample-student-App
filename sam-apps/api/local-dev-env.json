@@ -1,0 +1,10 @@
+{
+  "Parameters": {
+    "MIDDLEWARE_ENVIRONMENT": "dev",
+    "STUDENT_TASK_QUEUE_URL": "https://sqs.us-west-2.amazonaws.com/017937263664/hatton-dev-MiddlewareApiStack-JE0EC5QNYYHR-StudentTaskQueue-15ZVJ2KMTP7TJ",
+    "CONFIG_S3_BUCKET": "hatton-dev-configmanagerstack-gegzk9sgfu-s3bucket-fjqebigwvxe1",
+    "CONFIG_MANAGER": "sam-studentapp-preprod-ConfigM-ConfigManagerLambda-FKUbjaFZv5pF",
+    "REDIS_ENDPOINT": "redis-cluster-1-001.7w4yer.0001.usw2.cache.amazonaws.com",
+    "REDIS_PORT": 6379
+  }
+}

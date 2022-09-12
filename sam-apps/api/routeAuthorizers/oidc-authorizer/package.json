@@ -1,0 +1,16 @@
+{
+    "name": "oidc-token-authorizer",
+    "version": "1.0.0",
+    "description": "AWS Lambda Authorization based on OIDC access token ",
+    "main": "app.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+      "jwks-rsa": "^2.0.4",
+      "@okta/jwt-verifier": "^2.3.0"
+    },
+    "author": "",
+    "license": "ISC"
+  }
+  

@@ -1,0 +1,9 @@
+{
+  "name": "handlers",
+  "version": "1.0.0",
+  "description": "Route handlers for the Student App",
+  "main": "fileUploadHandler.js",
+  "keywords": [],
+  "author": "Robots & Pencils",
+  "license": "ISC"
+}

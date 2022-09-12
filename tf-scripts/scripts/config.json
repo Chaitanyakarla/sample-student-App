@@ -1,0 +1,8 @@
+{"TargetValue": 70.0,
+    "PredefinedMetricSpecification":
+    {"PredefinedMetricType": "ElastiCacheReplicaEngineCPUUtilization"
+    },
+    "ScaleInCooldown": 600,
+    "ScaleOutCooldown": 300
+}
+

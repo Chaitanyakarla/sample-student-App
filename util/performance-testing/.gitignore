@@ -1,0 +1,3 @@
+**/out
+**/set*Env.sh
+authenticate-auth0.sh

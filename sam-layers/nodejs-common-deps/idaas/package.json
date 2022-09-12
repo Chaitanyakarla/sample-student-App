@@ -1,0 +1,14 @@
+{
+  "name": "idaas-auth",
+  "version": "1.0.0",
+  "description": "Module for providing Organization-specific Identity Provider functionality related to authn/z",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chris Hatton",
+  "license": "ISC",
+  "dependencies": {
+    "@okta/jwt-verifier": "^2.3.0"
+  }
+}

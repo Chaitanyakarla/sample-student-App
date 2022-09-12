@@ -1,0 +1,534 @@
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  API, Lambda route handlers and S3/SQS assets to support the middleware
+
+Globals:
+  Function:
+    Environment:
+      Variables:
+        # Used to allow the application to know whether it is in prod|staging|dev
+        MIDDLEWARE_ENVIRONMENT: !Ref MiddlewareEnvironment
+
+        CONFIG_S3_BUCKET: !Ref ConfigurationBucket
+
+        # Caching
+        REDIS_ENDPOINT: !Ref RedisEndpoint
+        REDIS_PORT: !Ref RedisPort
+
+
+Parameters:
+  ConfigurationBucket:
+    Type: String
+    Description: Name of ARN of the S3 Bucket used to hold configuration data
+
+  MiddlewareDatabaseSecretArn:
+    Type: String
+    Description: ARN of the DB Connection secret in AWS Secret Manager
+  MiddlewareEnvironment:
+    Type: String
+    Description: Specifies whether the environment is dev|staging|prod
+  MiddlewareApiBuildVersion:
+    Type: String
+    Description: Specifies the build version to be displayed by the Healthcheck endpoint
+
+# Redis connection
+  RedisEndpoint:
+    Type: String
+    Description: Redis endpoint
+    Default: redis-cluster-1-001.7w4yer.0001.usw2.cache.amazonaws.com
+  RedisPort:
+    Type: String
+    Description: Redis port
+    Default: 6379
+
+# Subnet and Security Group Info
+  Subnet1:
+    Type: String
+    Description: Subnet Id for private subnet
+    Default: subnet-0629dfc2b42b6dfe6
+  Subnet2:
+    Type: String
+    Description: Subnet 2
+    Default: subnet-04ffa044be7390013
+  SecurityGroup1:
+    Type: String
+    Description: Security Group Id for private subnet
+    Default: sg-0ffe97eb057ed7ae3
+    
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+Transform:
+   'AWS::Serverless-2016-10-31'
+# Resources declares the AWS resources that you want to include in the stack
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+Resources:
+
+  # Student Task Status Change Queue
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html
+  StudentTaskQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 43200
+
+# ============================================================================
+# Layers
+# ============================================================================
+  CommonBaseLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs14.x
+      ContentUri: ../../sam-layers/nodejs-common-deps
+    Metadata:
+      BuildMethod: nodejs14.x
+
+# ============================================================================
+# Lambdas
+# ============================================================================
+  # Each Lambda function is defined by properties:
+  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  DocumentUploadHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./messageHandlers/documentTransfer/
+      Handler: sqsHandler.processSQSMessage
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Timeout: 25
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - LambdaInvokePolicy:
+            FunctionName: !Ref PurgeTaskDocuments
+        - S3CrudPolicy:
+            BucketName: !Ref DocumentUploadStorage
+        - S3ReadPolicy:
+            BucketName: !Ref ConfigurationBucket
+        - SQSPollerPolicy:
+            QueueName: !GetAtt StudentTaskQueue.QueueName
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref MiddlewareDatabaseSecretArn
+      Events:
+        PollQueueEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt StudentTaskQueue.Arn
+      VpcConfig:
+        SubnetIds:
+          - !Ref Subnet1
+          - !Ref Subnet2
+        SecurityGroupIds:
+        - !Ref SecurityGroup1
+      Environment:
+        Variables:
+          TASK_DOCUMENT_STORAGE: !Ref DocumentUploadStorage
+          PURGE_LAMBDA: !Ref PurgeTaskDocuments
+
+  DocumentUploadStorage:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  SalesforceAccessTokenJob:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./scheduledLambdas/
+      Handler: salesforceAccessToken.createAndCacheSalesforceAccessToken
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Timeout: 25
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref MiddlewareDatabaseSecretArn
+        - AWSLambdaVPCAccessExecutionRole
+        - S3ReadPolicy:
+            BucketName: !Ref ConfigurationBucket
+      VpcConfig:
+        SubnetIds:
+          - !Ref Subnet1
+          - !Ref Subnet2
+        SecurityGroupIds:
+        - !Ref SecurityGroup1
+      Events:
+        TokenRefreshTimer:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 1,7,13,19 * * ? *)
+            Description: Cron schedule for SF API Access Token refresh
+            Enabled: True
+      Environment:
+        Variables:
+          # All org codes that should be loaded and have access tokens created via this timed job.
+          ORGANIZATION_CODES: 'rnpdev'
+
+# ============================================================================
+# API
+# ============================================================================
+  MiddlewareApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors: 
+        AllowMethods: "'OPTIONS, POST, GET, PATCH'"
+        AllowHeaders: "'X-Api-Key, Authorization, Content-Type'" 
+        AllowOrigin: "'*'"
+      BinaryMediaTypes:
+              - "multipart/form-data"
+      Auth:
+        DefaultAuthorizer: OidcAuthorizer
+        Authorizers:
+          OidcAuthorizer:
+            FunctionArn: !GetAtt OidcAuthorizer.Arn
+            FunctionPayloadType: REQUEST
+            Identity:
+              Headers:
+                - x-api-key
+                - authorization
+        AddDefaultAuthorizerToCorsPreflight: false
+
+  # ===========================================================================
+  # Route Authorizer
+  # ===========================================================================
+  OidcAuthorizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./routeAuthorizers/oidc-authorizer/
+      Handler: oidcAuthorizer.handler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 100
+      Description: Secures API Endpoints by utilizing Identity Provider for Authentication and Authorization
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref MiddlewareDatabaseSecretArn
+        - AWSLambdaVPCAccessExecutionRole
+      VpcConfig:
+        SubnetIds:
+          - !Ref Subnet1
+          - !Ref Subnet2
+        SecurityGroupIds:
+        - !Ref SecurityGroup1
+
+  # ===========================================================================
+  # Route Handlers
+  # ===========================================================================
+
+  # The Native App Config Handler is used for returning some data to the front-end applicatioms
+  # iOS, Android, etc. that allows them to understand some operating context, i.e. minimum
+  # application version to force an upgrade. This data can be extended in the future as
+  # storage is currently just in S3.
+  NativeAppConfigHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./routeHandlers/nativeApplicationConfig/
+      Handler: nativeApplicationConfig.lambdaHandler
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Timeout: 100
+      Description: Load/return Native application (public) configuration
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref MiddlewareDatabaseSecretArn
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        NativeAppConfigGet:
+          Type: Api
+          Properties:
+            Path: /applications/config
+            Method: GET
+            RestApiId:
+              Ref: MiddlewareApi
+            Auth:
+              Authorizer: NONE
+
+  Tester:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./routeHandlers/salesforce/
+      Handler: salesforce.lambda_handler
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Timeout: 100
+      Description: Just a lambda to support live code-editting/denbugging in the AWS Console.
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref MiddlewareDatabaseSecretArn
+        - AWSLambdaVPCAccessExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Ref ConfigurationBucket
+        - S3CrudPolicy:
+            BucketName: !Ref DocumentUploadStorage
+      VpcConfig:
+        SubnetIds:
+          - !Ref Subnet1
+          - !Ref Subnet2
+        SecurityGroupIds:
+        - !Ref SecurityGroup1
+      # Events:
+      #   NativeAppConfigGet:
+      #     Type: Api
+      #     Properties:
+      #       Path: /salesforce/config
+      #       Method: GET
+      #       RestApiId:
+      #         Ref: MiddlewareApi
+
+# The Student Route Handler is responsible for processing most of the Student-related 
+# HTTP endpoints.
+  StudentRouteHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./routeHandlers/student/
+      Handler: studentHandler.getStudentsInfo
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Timeout: 100
+      Description: Load/return Academic Terms from remote data store
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Ref DocumentUploadStorage
+        - S3ReadPolicy:
+            BucketName: !Ref ConfigurationBucket
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref MiddlewareDatabaseSecretArn
+        - AWSLambdaVPCAccessExecutionRole
+      VpcConfig:
+        SubnetIds:
+          - !Ref Subnet1
+          - !Ref Subnet2
+        SecurityGroupIds:
+        - !Ref SecurityGroup1
+      Environment:
+        Variables:
+          TASK_DOCUMENT_STORAGE: !Ref DocumentUploadStorage
+      Events:
+        AcademicTermApiGET:
+          Type: Api
+          Properties:
+            Path: /students/me/academicTerms
+            Method: GET
+            RestApiId:
+              Ref: MiddlewareApi
+        ProfileApiGET:
+          Type: Api
+          Properties:
+            Path: /students/me/profile
+            Method: GET
+            RestApiId:
+              Ref: MiddlewareApi
+        StaffContactsApiGET:
+          Type: Api
+          Properties:
+            Path: /students/me/successContacts
+            Method: GET
+            RestApiId:
+              Ref: MiddlewareApi
+        TasksApiGET:
+          Type: Api
+          Properties:
+            Path: /students/me/tasks
+            Method: GET
+            RestApiId:
+              Ref: MiddlewareApi
+        TaskApiGET:
+          Type: Api
+          Properties:
+            Path: /students/me/tasks/{taskId}
+            Method: GET
+            RestApiId:
+              Ref: MiddlewareApi
+        TaskUploadPOST:
+          Type: Api
+          Properties:
+            Path: /students/me/tasks/{taskId}/files
+            Method: POST
+            RestApiId:
+              Ref: MiddlewareApi
+        TaskDocDELETE:
+          Type: Api
+          Properties:
+            Path: /students/me/tasks/{taskId}/files
+            Method: DELETE
+            RestApiId:
+              Ref: MiddlewareApi
+
+  # The Student Task Handler is responsible for transferring student documents stored in AWS S3
+  # to the CRM on behalf of the student. 
+  # Sequence Diagram (12/2021) => https://tinyurl.com/2p9a8k89
+  StudentTaskHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./routeHandlers/studentTask/
+      Handler: studentTaskHandler.lambdaHandler
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Timeout: 100
+      Description: Student task Management via SalesForce CRM, e.g. file upload, status change, etc.
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref MiddlewareDatabaseSecretArn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt StudentTaskQueue.QueueName
+        - S3CrudPolicy:
+            BucketName: !Ref DocumentUploadStorage
+        - S3ReadPolicy:
+            BucketName: !Ref ConfigurationBucket
+        - AWSLambdaVPCAccessExecutionRole
+      VpcConfig:
+        SubnetIds:
+          - !Ref Subnet1
+          - !Ref Subnet2
+        SecurityGroupIds:
+        - !Ref SecurityGroup1
+      Environment:
+        Variables:
+          STUDENT_TASK_QUEUE_URL: !Ref StudentTaskQueue
+          TASK_DOCUMENT_STORAGE: !Ref DocumentUploadStorage
+          
+      # NOTE: The studentHandler (above) still manages some of HTTP actions on this particular route.
+      # This will likely be refactored in the future.
+      Events:
+        StudentTaskPATCH:
+          Type: Api
+          Properties:
+            Path: /students/me/tasks/{taskId}
+            Method: PATCH
+            RestApiId:
+              Ref: MiddlewareApi
+  
+# Convenience route for inspecting the identity attributes of the current user
+  UserIdentityHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./routeHandlers/userIdentity/
+      Handler: userIdentityHandler.lambdaHandler
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Timeout: 100
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      Events:
+        StudentTaskPATCH:
+          Type: Api
+          Properties:
+            Path: /students/me/identity
+            Method: GET
+            RestApiId:
+              Ref: MiddlewareApi
+
+  HealthCheckHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./routeHandlers/health/
+      Handler: healthcheck.check_health
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Timeout: 100
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      Environment:
+        Variables:
+          MIDDLEWARE_API_BUILD_VERSION: !Ref MiddlewareApiBuildVersion
+        
+      Events:
+        HealthGET:
+          Type: Api
+          Properties:
+            Path: /health
+            Method: GET
+            RestApiId:
+              Ref: MiddlewareApi
+            Auth:
+              Authorizer: NONE
+
+
+  PurgeTaskDocuments:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./manualJobHandlers/purgeStudentDocuments/
+      Handler: purgeTaskDocuments.handler
+      Runtime: nodejs14.x
+      Timeout: 100
+      MemorySize: 1024
+      Description: Purge all documents from a students S3 Bucket
+      Environment:
+        Variables:
+          TASK_DOCUMENT_STORAGE: !Ref DocumentUploadStorage
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Ref DocumentUploadStorage
+      Events:
+        Purge:
+          Type: Api
+          Properties:
+            Method: DELETE
+            Path: /documents
+            RestApiId:
+              Ref: MiddlewareApi
+
+  FlushRedisCacheLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: ./manualJobHandlers/redisCache/flushRedis.handler
+      Runtime: nodejs14.x
+      Timeout: 10
+      MemorySize: 256
+      Description: Flush the redis cache
+      VpcConfig:
+        SubnetIds:
+          - !Ref Subnet1
+          - !Ref Subnet2
+        SecurityGroupIds:
+        - !Ref SecurityGroup1
+      Layers:
+        - !Ref CommonBaseLayer
+      Policies: 
+        - AWSLambdaVPCAccessExecutionRole
+        - AWSLambdaBasicExecutionRole
+      Events:
+        Flush:
+          Type: Api
+          Properties:
+            Path: /cache
+            Method: DELETE
+            RestApiId:
+              Ref: MiddlewareApi
+  
+Outputs:
+  MiddlewareApi:
+    Description: API Gateway host to the middleware API    # Value: !Ref MiddlewareApi
+    Value: !Sub "https://${MiddlewareApi}.execute-api.${AWS::Region}.amazonaws.com"
+

@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+- AWS::Serverless-2016-10-31
+
+Parameters:
+
+  MiddlewareDatabaseSecretArn:
+    Type: String
+    Description: ARN of the DB Connection secret in AWS Secret Manager
+    Default: arn:aws:secretsmanager:us-west-2:017937263664:secret:dev/student-app-middleware-db-H9cw8w
+  
+  MiddlewareEnvironment:
+    Type: String
+    Description: Specifies whether the environment is dev|staging|prod
+    Default: dev
+ 
+  MiddlewareApiBuildVersion:
+    Type: String
+    Description: Created by the build tool and injected at deployment time
+    Default: fubar
+
+Resources:
+
+  ConfigManagerStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./sam-apps/config-manager/template.yml
+
+  MiddlewareApiStack:
+    Type: AWS::Serverless::Application
+    DependsOn:
+      - ConfigManagerStack
+    Properties:
+      Location: ./sam-apps/api/template.yml
+      Parameters:
+        # ConfigManagerLambda: !GetAtt [ ConfigManagerStack, 'Outputs.Lambda' ]
+        ConfigurationBucket: !GetAtt [ ConfigManagerStack, 'Outputs.ConfigurationBucket']
+        MiddlewareDatabaseSecretArn: !Ref MiddlewareDatabaseSecretArn
+        MiddlewareEnvironment: !Ref MiddlewareEnvironment
+        MiddlewareApiBuildVersion: !Ref MiddlewareApiBuildVersion
+
+Outputs:
+  MiddlewareApi:
+    Description: API Gateway host to the middleware API
+    Value: !GetAtt [ MiddlewareApiStack, 'Outputs.MiddlewareApi' ] 

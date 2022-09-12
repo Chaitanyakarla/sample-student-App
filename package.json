@@ -1,0 +1,18 @@
+{
+  "name": "sam-middleware-app",
+  "version": "0.0.1",
+  "scripts": {
+    "deploy": "npm run sam-build && npm run sam-deploy",
+    "sam-build": "sam build",
+    "sam-deploy": "sam deploy --guided --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND",
+    "start-local-api": "sam build && sam local start-api -n sam-apps/api/env.sample.json --skip-pull-image",
+    "test": "mocha test || true",
+    "quick-deploy": "sam build -c && sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "mocha": "^9.0.2"
+  },
+  "dependencies": {}
+}

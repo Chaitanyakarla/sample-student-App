@@ -1,0 +1,39 @@
+{
+    "Version": "2012-10-17",
+    "Id": "BACKENDBUCKETPOLICY",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": "s3:ListBucket",
+        "Principal": {
+            "AWS": "arn:aws:iam::111411876510:user/chris.hatton"
+        },
+        "Resource": "arn:aws:s3:::prod-studentapp-infrastructure"
+      },
+      {
+        "Effect": "Allow",
+        "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+        "Principal": {
+            "AWS": "arn:aws:iam::111411876510:user/chris.hatton"
+        },
+        "Resource": "arn:aws:s3:::prod-studentapp-infrastructure/backend/terraform/state"
+      },
+      {
+        "Effect": "Allow",
+        "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+        "Principal": {
+            "AWS": "arn:aws:iam::111411876510:user/chris.hatton"
+        },
+        "Resource": "arn:aws:s3:::prod-studentapp-infrastructure/networking/terraform/state"
+      },
+      {
+        "Effect": "Allow",
+        "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+        "Principal": {
+            "AWS": "arn:aws:iam::111411876510:user/chris.hatton"
+        },
+        "Resource": "arn:aws:s3:::prod-studentapp-infrastructure/database/elasticache/terraform/state"
+      }
+    ]
+  }
+  

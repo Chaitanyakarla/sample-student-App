@@ -1,0 +1,12 @@
+{
+  "name": "middleware-db",
+  "version": "1.0.0",
+  "description": "Helper module for working with the Middleware database (AWS RDS Postgres",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chris Hatton",
+  "license": "ISC",
+  "dependencies": {}
+}

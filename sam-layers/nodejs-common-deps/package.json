@@ -1,0 +1,23 @@
+{
+  "name": "nodejs-common-deps-layer",
+  "version": "1.0.0",
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.47.0",
+    "@okta/jwt-verifier": "^2.3.0",
+    "aws-sdk": "^2.1059.0",
+    "dotenv": "^16.0.0",
+    "got": "^11.8.2",
+    "jsonwebtoken": "^8.5.1",
+    "md5": "^2.3.0",
+    "pg": "^8.7.1",
+    "redis": "^4.0.4",
+    "uuid": "^8.3.2"
+  },
+  "description": "These scripts are installed as an AWS Lambda base layer and are made available to the Lambda at runtime by installing them at `/opt/nodejs/_LAYERNAME_`",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chris Hatton",
+  "license": "ISC"
+}

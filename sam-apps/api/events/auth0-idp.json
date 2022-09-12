@@ -1,0 +1,40 @@
+{
+  "headers": {
+    "Accept": "*/*",
+    "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImF3UWtSWV94M0hhZDI0UnV3cGRydCJ9.eyJpc3MiOiJodHRwczovL2Rldi11OXpvemVuNy51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjE2ZDk4NDlmZTM5YmIwMDY5MjY3MTY3IiwiYXVkIjpbImh0dHBzOi8vc3R1ZGVudGFwcC1hcGktcHJlcHJvZC5ybnAuaW8iLCJodHRwczovL2Rldi11OXpvemVuNy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjQzMTQ5OTEzLCJleHAiOjE2NDMyMzYzMTMsImF6cCI6IlFpd1ZDNHBZOVZTQnA1WjdNSFdFTFRXOFMxM2NEU0hXIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImd0eSI6InBhc3N3b3JkIn0.YRGQcTCIM5feXwcBV3NyXIy5986bieBm8JGZ2zQqOCp_svIO5hiTPGI_5xsRyCV_K7HeI3hV9mt4CH8OQ5uXaI7RWPbZ3HqY4x4EyfTeBeF4XI3EnIxpPXeQ6PDKi0CFSPqgG7uYPIJu_HnS37ngdv4J-OKf51erl2eGpxHkdFnj1-hHnIe9m1LQu4MrOYGYGH2SRCsu0VZ8kZyiX7xUmQz0NbB6ds76md0OhBC0uC5vEZRdMr0NiLdtqdQIBks7JvZvNsbvvxqdHoqeSqqtJ0AMuoU1ChCR4JQ-YHzxEz-Uu6KIXnXO4KRz3lrMZghBbkOkSoVAl_9oINexYpUD3Q",
+    "X-Api-Key": "8d79180x-378f-42ae-884e-f2d00ad44f54",
+    "X-Forwarded-Port": "3000",
+    "X-Forwarded-Proto": "http"
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "authorizer": {
+      "crm_id":"studentappstest+maryville@rnp.io",
+      "organization_id":"1",
+      "organization_code":"rnpdev",
+      "organization_name":"Robots & Pencils University",
+      "idp_issuer":"https://dev-u9zozen7.us.auth0.com/",
+      "user_identity":{
+        "id":2,
+        "organization_id":"1",
+        "first_name":"Auth0",
+        "last_name":"Testuser",
+        "email":"studentappstest+maryville@rnp.io",
+        "idp_identity":{
+          "sub":"auth0|616d9849fe39bb0069267167",
+          "name":"Auth0 Testuser",
+          "email":"studentappstest+maryville@rnp.io",
+          "picture":"https://s.gravatar.com/avatar/371deff8011d8c731f6640af7c259fb1?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fst.png",
+          "nickname":"studentappstest+maryville",
+          "updated_at":"2022-01-26T20:44:35.378Z",
+          "email_verified":false
+        },
+        "idp_sub":"auth0|616d9849fe39bb0069267167",
+        "crm_principal_id":"studentappstest+maryville@rnp.io",
+        "apikey_created_by":"8d79180x-378f-42ae-884e-f2d00ad44f54",
+        "created_on":"2022-01-26T21:09:04.383Z",
+        "modified_on":null
+      }
+    }
+  }
+}

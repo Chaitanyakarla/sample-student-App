@@ -1,0 +1,95 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "dev-upton"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-16k79zm41zvzg"
+s3_prefix = "dev-upton"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+image_repositories = []
+confirm_changeset = true
+parameter_overrides = """\
+    MiddlewareDatabaseSecretArn=arn:aws:secretsmanager:us-west-2:017937263664:secret:dev/student-app-middleware-db-H9cw8w \
+    MiddlewareEnvironment=dev \
+    MiddlewareApiBuildVersion=upton.dev \
+    RedisEndpoint=redis-cluster-1-001.7w4yer.0001.usw2.cache.amazonaws.com \
+    RedisPort=6379 \
+    SecurityGroup1=sg-0ffe97eb057ed7ae3 \
+    Subnet1=subnet-0629dfc2b42b6dfe6 \
+    Subnet2=subnet-04ffa044be7390013"""
+
+
+[hatton-dev]
+[hatton-dev.deploy]
+[hatton-dev.deploy.parameters]
+stack_name = "hatton-dev"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-16k79zm41zvzg"
+s3_prefix = "hatton-dev"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+image_repositories = []
+confirm_changeset = false
+parameter_overrides = """\
+    MiddlewareDatabaseSecretArn=arn:aws:secretsmanager:us-west-2:017937263664:secret:dev/student-app-middleware-db-H9cw8w \
+    MiddlewareEnvironment=dev \
+    MiddlewareApiBuildVersion=hatton.dev \
+    RedisEndpoint=redis-cluster-1-001.7w4yer.0001.usw2.cache.amazonaws.com \
+    RedisPort=6379 \
+    SecurityGroup1=sg-0ffe97eb057ed7ae3 \
+    Subnet1=subnet-0629dfc2b42b6dfe6 \
+    Subnet2=subnet-04ffa044be7390013"""
+
+
+[dev-upton]
+[dev-upton.deploy]
+[dev-upton.deploy.parameters]
+stack_name = "dev-upton"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-16k79zm41zvzg"
+s3_prefix = "dev-upton"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+image_repositories = []
+confirm_changeset = false
+parameter_overrides = """\
+    MiddlewareDatabaseSecretArn=arn:aws:secretsmanager:us-west-2:017937263664:secret:dev/student-app-middleware-db-H9cw8w \
+    MiddlewareEnvironment=dev \
+    MiddlewareApiBuildVersion=upton.dev \
+    RedisEndpoint=redis-cluster-1-001.7w4yer.0001.usw2.cache.amazonaws.com \
+    RedisPort=6379 \
+    SecurityGroup1=sg-0ffe97eb057ed7ae3 \
+    Subnet1=subnet-0629dfc2b42b6dfe6 \
+    Subnet2=subnet-04ffa044be7390013"""
+
+
+[staging]
+[staging.deploy]
+[staging.deploy.parameters]
+stack_name = "staging"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-16k79zm41zvzg"
+s3_prefix = "staging"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+parameter_overrides = ""
+image_repositories = []
+confirm_changeset = false
+
+[sam-studentapp-preprod]
+[sam-studentapp-preprod.deploy]
+[sam-studentapp-preprod.deploy.parameters]
+stack_name = "sam-studentapp-preprod"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-16k79zm41zvzg"
+s3_prefix = "sam-studentapp-preprod"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+image_repositories = []
+confirm_changeset = true
+parameter_overrides = """\
+    MiddlewareDatabaseSecretArn=arn:aws:secretsmanager:us-west-2:017937263664:secret:staging/student-app-middleware-db-Wi0ySA \
+    MiddlewareEnvironment=staging \
+    MiddlewareApiBuildVersion=local.build \
+    RedisEndpoint=redis-cluster-1-001.7w4yer.0001.usw2.cache.amazonaws.com \
+    RedisPort=6379 \
+    SecurityGroup1=sg-0ffe97eb057ed7ae3 \
+    Subnet1=subnet-0629dfc2b42b6dfe6 \
+    Subnet2=subnet-04ffa044be7390013"""

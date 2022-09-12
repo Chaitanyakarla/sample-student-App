@@ -1,0 +1,359 @@
+openapi: 3.0.0
+
+info:
+  title: Student App
+  version: 0.1.0
+  description: Application-facing (native, mobile and web) APIs for the Robots & Pencils Student Application
+  contact:
+    name: Chris Hatton
+    email: chris.hatton@robotsandpencils.com
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/robots-and-pencils2/Student-App/1.0.0
+
+paths:
+  /students/{studentId}/academicTerms:
+    get:
+      summary: 'Enrolled academic terms (and course sections) for given student'
+      operationId: listStudentAcademicTerms
+      tags:
+        - Academic Term, Student
+      parameters:
+        - name: studentId
+          description: alpha-numeric id of the student. 'me' can be used to identify the current student
+          in: path
+          schema:
+            type: string
+            default: me
+          required: true
+        - name: includeCourseSections
+          description: boolean to indicate whether to also include Course Sections in each Academic Term
+          in: query
+          schema:
+            type: boolean
+            default: false
+          required: false
+        - name: includeInactiveTerms
+          description: boolean to indicate whether to also include Academic Terms that are either future/past
+          in: query
+          schema:
+            type: boolean
+            default: false
+          required: false
+      responses:
+        '200':
+          description: 'Array of Academic Terms'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentAcademicTermCollection'
+
+  /students/{studentId}/staffContacts:
+    get:
+      summary: 'Staff Contact information for this student'
+      operationId: listStaffContacts
+      tags:
+        - Student, Faculty
+      parameters:
+        - name: studentId
+          description: alpha-numeric id of the student. 'me' can be used to identify the current student
+          in: path
+          schema:
+            type: string
+            default: me
+          required: true
+      responses:
+        '200':
+          description: 'Array of Faculty Contacts'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FacultyCollection'
+
+
+  # /students/{studentId}/courseSections:
+  #   get:
+  #     summary: 'Returns a list of courses for this particular student'
+  #     operationId: listStudentCourseSections
+  #     tags:
+  #       - Course Section, Student
+  #     parameters:
+  #       - name: studentId
+  #         description: alpha-numeric id of the student. 'me' can be used to identify the current student
+  #         in: path
+  #         schema:
+  #           type: string
+  #           default: me
+  #         required: true
+  #     responses:
+  #       '200':
+  #         description: 'Array of course section enrollments for current student'
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/StudentCourseSectionCollection'
+
+  /students/{studentId}/profile:
+    get:
+      summary: 'Student profile info, e.g. name, contact info'
+      operationId: listStudent
+      tags:
+        - Student
+      parameters:
+        - name: studentId
+          description: alpha-numberic id of the student. 'me' can be used to identify the current student
+          in: path
+          schema:
+            type: string
+            default: me
+          required: true
+      responses:
+        '200':
+          description: 'Details about a student by alpha-numeric ID'
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+
+components:
+  schemas:
+
+    ContactInfo:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "spencer@jumanji.edu"
+        phone:
+          type: string
+          example: '720-867-5309'
+          
+    # -------------------------------------------------------------------------------
+    # Student
+    # -------------------------------------------------------------------------------
+    # Basic Student info for display
+    Student:
+      type: object
+      required:
+        - id, firstName, lastName, email
+      properties:
+        id:
+          type: string
+          example: "444-99-0000"
+        firstName:
+          type: string
+          example: "Dwayne"
+        lastName:
+          type: string
+          example: "Johnson"
+        contactInfo:
+          $ref: '#/components/schemas/ContactInfo'
+    
+    FacultyRole:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Instructor"
+        # roleType: 
+        #   type: string
+        #   enum: [instructor, ta, advisor, coach]
+        #   example: instructor|ta|advisor|coach
+                
+    Faculty:
+      type: object
+      required:
+        - id, firstName, lastName, role
+      properties:
+        id:
+          type: string
+          example: "999-88-6677"
+        firstName:
+          type: string
+          example: "Smolder"
+        lastName:
+          type: string
+          example: "Bravestone"
+        title: 
+          type: string
+          example: "Dr."
+        contactInfo:
+          $ref: '#/components/schemas/ContactInfo'
+        # role1:
+        #   type: string
+        #   enum: [instructor, ta, advisor, coach]
+        role:
+          $ref: '#/components/schemas/FacultyRole'
+        isPrimary:
+          type: boolean
+          
+
+    FacultyCollection:
+      type: object
+      properties:
+        results:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Faculty'
+        
+    # -------------------------------------------------------------------------------
+    # StudentCourseSection
+    # -------------------------------------------------------------------------------
+    StudentCourseSectionGrades:
+      type: object
+      description: Collection of current/final gtrades for a Course Section
+      properties:
+        finalGrade:
+          type: number
+          format: float
+          example: "88.9"
+
+    Location:
+      type: object
+      description: Physical location for a Course Section
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Business Bldg, Room #304"
+
+    CourseSchedule:
+      type: object
+      description: Times, days of week and location for courses.
+      properties:
+        startTime:
+          type: string
+          format: datetime
+          example: 14:45:15Z
+        endTime:
+          type: string
+          format: datetime
+          example: 14:45:15Z
+        location:
+          $ref: '#/components/schemas/Location'
+        monday:
+          type: boolean
+        tuesday:
+          type: boolean
+        wednesday:
+          type: boolean
+        thursday:
+          type: boolean
+        friday:
+          type: boolean
+        saturday:
+          type: boolean
+        sunday:
+          type: boolean
+          
+    StudentCourseSection:
+      type: object
+      description: An instance of Student Course Section (includes a schedule, an instructor, students, etc.)
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: "708701741234"
+        title:
+          type: string
+          example: "Biology 101 - A4"
+        description:
+          type: string
+          example: Starter course for Biology, includes topics of DNA/RNA, cells, genetics, organism taxonomy, ecology, evolution and major biologicval systems (circulatory, respiratory, etc.).
+        code:
+          type: string
+          example: "BIO101-A4"
+        startDate:
+          type: string
+          format: date
+          example: "2021-01-20"
+        endDate:
+          type: string
+          format: date
+          example: "2021-05-20"
+        creditHours:
+          type: integer
+          format: float
+          example: 3.5
+        # grades:
+        #   $ref: '#/components/schemas/StudentCourseSectionGrades'
+        academicTermId:
+          type: string
+          example: "0870701234"
+        schedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseSchedule'
+        modality:
+          type: string
+          enum: [ONLINE, CAMPUS, HYBRID, DEFAULT]
+          example: 'ONLINE|CAMPUS|HYBRID|UNKNOWN'
+        facultyMembers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Faculty'
+
+    # StudentCourseSectionCollection:
+    #   type: object
+    #   properties:
+    #     results:
+    #       type: array
+    #       items: 
+    #         $ref: '#/components/schemas/StudentCourseSection'
+
+    # -------------------------------------------------------------------------------
+    # StudentAcademicTerm
+    # -------------------------------------------------------------------------------
+    # Includes Academic Term and Course Sections (for ease of use)
+    StudentAcademicTerm:
+      type: object
+      required:
+        - id, name
+      properties:
+        id:
+          type: string
+          example: "0897501842734"
+        name:
+          type: string
+          example: "Spring 2021"
+        startDate:
+          type: string
+          format: date
+          example: "2021-01-10"
+        endDate:
+          type: string
+          format: date
+          example: "2021-05-20"
+        courseSections:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentCourseSection'
+
+    StudentAcademicTermCollection:
+      type: object
+      properties:
+        results:
+          type: array
+          items: 
+            $ref: '#/components/schemas/StudentAcademicTerm'
+
+    # Error:
+    #   type: object
+    #   required:
+    #     - code
+    #     - message
+    #   properties:
+    #     code:
+    #       type: integer
+    #       format: int32
+    #     message:
+    #       type: string

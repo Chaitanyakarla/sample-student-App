@@ -1,0 +1,15 @@
+{
+  "name": "student-route-handler",
+  "version": "1.0.0",
+  "description": "Student Route Handler",
+  "main": "index.js",
+  "scripts": {
+    "start-local-api": "sam build && sam local start-api -n env.sample.json --skip-pull-image"
+  },
+  "author": "Chris Hatton",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.900.0",
+    "lambda-multipart-parser": "^1.0.1"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "identity-provider-route-authorizer",
+  "version": "1.0.0",
+  "description": "AWS Lambda Authorization based on Institution's Identity Provider",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "jwks-rsa": "^2.0.4"
+  },
+  "author": "",
+  "license": "ISC"
+}

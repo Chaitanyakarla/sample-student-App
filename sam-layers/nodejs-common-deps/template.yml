@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+- AWS::Serverless-2016-10-31
+
+Resources:
+
+  NodeCommonDeps:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs14.x
+      ContentUri: ./
+    Metadata:
+      BuildMethod: nodejs14.x
+
+Outputs:
+
+  Layer:
+    Description: Node Common Dependency Layer
+    Value: !Ref NodeCommonDeps

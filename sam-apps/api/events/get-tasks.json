@@ -1,0 +1,119 @@
+{
+    "resource": "/students/me/tasks",
+    "path": "/path/to/resource",
+    "httpMethod": "GET",
+    "isBase64Encoded": true,
+    "stageVariables": {
+      "baz": "qux"
+    },
+    "headers": {
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+      "Accept-Encoding": "gzip, deflate, sdch",
+      "Accept-Language": "en-US,en;q=0.8",
+      "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImF3UWtSWV94M0hhZDI0UnV3cGRydCJ9.eyJpc3MiOiJodHRwczovL2Rldi11OXpvemVuNy51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjE2ZDk4MTk3MmVmYTgwMDY5Y2ZiZGE3IiwiYXVkIjpbImh0dHBzOi8vc3R1ZGVudGFwcC1hcGktcHJlcHJvZC5ybnAuaW8iLCJodHRwczovL2Rldi11OXpvemVuNy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjQ1ODM4MTYwLCJleHAiOjE2NDU5MjQ1NjAsImF6cCI6IlFpd1ZDNHBZOVZTQnA1WjdNSFdFTFRXOFMxM2NEU0hXIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImd0eSI6InBhc3N3b3JkIn0.i23m2mkRnIWx162YcnJ5YaioBNtUtx9m6mJhJOYumwN9DU7UNuPKLY2-Iu_NeFlzgqDzoYI8i8DlvWAcGriY6I8c_qk3IKEnCFjaFotroE1nJfn8qP2GNu0OSdBVrdLK8IqIlHtAHHBNa3AtNhU-fWas8JjcazoI0i6tev_N4pnbfFSRUqEw1TJ3xMzHMgg74mZoe_IfPPn314X2NuWjgBtxBI1LbWwa0H7m4BPkgxOI3SCMfsHwXs0q-F5jE6f1mbsge7toj4kKfYqrTngf2-C8DTR0ZsOWPt3LoxUl4cnoHReSXjR_W_RuQU1qjFfNUQmgHyq1Xz_fZhY0iE2ZfQ",
+      "Cache-Control": "max-age=0",
+      "CloudFront-Forwarded-Proto": "https",
+      "CloudFront-Is-Desktop-Viewer": "true",
+      "CloudFront-Is-Mobile-Viewer": "false",
+      "CloudFront-Is-SmartTV-Viewer": "false",
+      "CloudFront-Is-Tablet-Viewer": "false",
+      "CloudFront-Viewer-Country": "US",
+      "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
+      "Upgrade-Insecure-Requests": "1",
+      "User-Agent": "Custom User Agent String",
+      "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Id": "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
+      "X-Forwarded-For": "127.0.0.1, 127.0.0.2",
+      "X-Forwarded-Port": "443",
+      "X-Forwarded-Proto": "https",
+      "X-Api-Key": "8d79180x-378f-42ae-884e-f2d00ad44f54"
+    },
+    "multiValueHeaders": {
+      "Accept": [
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+      ],
+      "Accept-Encoding": [
+        "gzip, deflate, sdch"
+      ],
+      "Accept-Language": [
+        "en-US,en;q=0.8"
+      ],
+      "Cache-Control": [
+        "max-age=0"
+      ],
+      "CloudFront-Forwarded-Proto": [
+        "https"
+      ],
+      "CloudFront-Is-Desktop-Viewer": [
+        "true"
+      ],
+      "CloudFront-Is-Mobile-Viewer": [
+        "false"
+      ],
+      "CloudFront-Is-SmartTV-Viewer": [
+        "false"
+      ],
+      "CloudFront-Is-Tablet-Viewer": [
+        "false"
+      ],
+      "CloudFront-Viewer-Country": [
+        "US"
+      ],
+      "Host": [
+        "0123456789.execute-api.us-east-1.amazonaws.com"
+      ],
+      "Upgrade-Insecure-Requests": [
+        "1"
+      ],
+      "User-Agent": [
+        "Custom User Agent String"
+      ],
+      "Via": [
+        "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)"
+      ],
+      "X-Amz-Cf-Id": [
+        "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA=="
+      ],
+      "X-Forwarded-For": [
+        "127.0.0.1, 127.0.0.2"
+      ],
+      "X-Forwarded-Port": [
+        "443"
+      ],
+      "X-Forwarded-Proto": [
+        "https"
+      ],
+      "X-Api-Key": [
+          "8d79180x-378f-42ae-884e-f2d00ad44f54"
+      ]
+    },
+    "requestContext": {
+      "accountId": "123456789012",
+      "resourceId": "123456",
+      "stage": "prod",
+      "requestId": "c6af9ac6-7b61-11e6-9a41-93e8deadbeef",
+      "requestTime": "09/Apr/2015:12:34:56 +0000",
+      "requestTimeEpoch": 1428582896000,
+      "authorizer": {
+        "crm_id": "studentappstest+rnp1@rnp.io"
+      },
+      "identity": {
+        "cognitoIdentityPoolId": null,
+        "accountId": null,
+        "cognitoIdentityId": null,
+        "caller": null,
+        "accessKey": null,
+        "sourceIp": "127.0.0.1",
+        "cognitoAuthenticationType": null,
+        "cognitoAuthenticationProvider": null,
+        "userArn": null,
+        "userAgent": "Custom User Agent String",
+        "user": null
+      },
+      "path": "/prod/path/to/resource",
+      "resourcePath": "/students/{studentId}/tasks",
+      "httpMethod": "GET",
+      "apiId": "1234567890",
+      "protocol": "HTTP/1.1"
+    }
+  }

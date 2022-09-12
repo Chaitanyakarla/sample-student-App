@@ -1,0 +1,95 @@
+{
+  "body": "{\"action\": \"SELF_COMPLETE\"}",
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Authorization": "Bearer eyJraWQiOiJzOUNBTldoZHVfbl94ZlA3UE5pblA4Vm5mTThETWE4TWJLQi1DNTVjSHJjIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULnBteWVJWXh6bm1TeUhVNUVaaW1ZbWlhc1RpQUVVdXlCclRaQjFDLUlDWGsiLCJpc3MiOiJodHRwczovL2Rldi02NjI2Mjk4Lm9rdGEuY29tL29hdXRoMi9hdXMzZXFhZDc1WE1QU2M4YTVkNyIsImF1ZCI6Imh0dHBzOi8vc3R1ZGVudGFwcC1hcGktcHJlcHJvZC5ybnAuaW8iLCJpYXQiOjE2NDMwNDM4MjMsImV4cCI6MTY0MzA3OTgyMywiY2lkIjoiMG9hMzRpbThrcThYelJmbFo1ZDciLCJ1aWQiOiIwMHUzNGs0YWlwUGxmSWNoajVkNyIsInNjcCI6WyJvcGVuaWQiLCJwcm9maWxlIiwiZW1haWwiXSwic3ViIjoic3R1ZGVudGFwcHN0ZXN0K21hcnl2aWxsZUBybnAuaW8ifQ.ZNhAoMRZqVp957yYMY91vtucRUKcgnqtkGaNZMhnyh4MFw-yebIHp7SgdpYxs814bqwydHBD7NoiDDbqhj7Vp1vcQfhnGnPtGFuggP76_zE8EwMBcAFI-bMvz3A6AbIhdhpRS_ypFQwg28DjBBtH2_WlUz6l2R4ur8AF447eiuUs55LxKMiFSGFttWgAInEg-xP4dZpK4aRk48XLHVwB0UwT7Dd1hHGFfaeHwEZWJIdxdOcFd41vLw6616PiDk9dnRV_sjQOgFpiHtfcBDPL6AyGhxDQv2FAJ25gm7qiBR3sv_CGLuPrd3yo2lf9Qe8QKwW7t1GH2tfwD_61vsJLlw",
+    "Connection": "keep-alive",
+    "Content-Length": "737",
+    "Content-Type": "text/plain",
+    "Host": "localhost:3000",
+    "User-Agent": "PostmanRuntime/7.28.4",
+    "X-Api-Key": "8d79180x-378f-42ae-884e-f2d00ad44f54",
+    "X-Forwarded-Port": "3000",
+    "X-Forwarded-Proto": "http"
+  },
+  "httpMethod": "PATCH",
+  "isBase64Encoded": false,
+  "multiValueHeaders": {
+    "Accept": [
+      "*/*"
+    ],
+    "Accept-Encoding": [
+      "gzip, deflate, br"
+    ],
+    "Connection": [
+      "keep-alive"
+    ],
+    "Content-Length": [
+      "737"
+    ],
+    "Content-Type": [
+      "text/plain"
+    ],
+    "Host": [
+      "localhost:3000"
+    ],
+    "User-Agent": [
+      "PostmanRuntime/7.28.4"
+    ],
+    "X-Api-Key": [
+      "8d79180x-378f-42ae-884e-f2d00ad44f54"
+    ],
+    "X-Forwarded-Port": [
+      "3000"
+    ],
+    "X-Forwarded-Proto": [
+      "http"
+    ]
+  },
+  "multiValueQueryStringParameters": {
+    "upload": [
+      "false"
+    ]
+  },
+  "path": "/students/me/tasks/00T5e00000N3F5VEAV",
+  "pathParameters": {
+    "taskId": "00T5e00000N3F5VEAV"
+  },
+  "queryStringParameters": {
+    "upload": "false"
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "authorizer": {
+      "crm_id": "joshua.upton@robotsandpencils.com"
+    },
+    "apiId": "1234567890",
+    "domainName": "localhost:3000",
+    "extendedRequestId": null,
+    "httpMethod": "PATCH",
+    "identity": {
+      "accountId": null,
+      "apiKey": null,
+      "caller": null,
+      "cognitoAuthenticationProvider": null,
+      "cognitoAuthenticationType": null,
+      "cognitoIdentityPoolId": null,
+      "sourceIp": "127.0.0.1",
+      "user": null,
+      "userAgent": "Custom User Agent String",
+      "userArn": null
+    },
+    "path": "/students/me/tasks/{taskId}",
+    "protocol": "HTTP/1.1",
+    "requestId": "21672eb9-6753-413e-8392-71f9293d7e37",
+    "requestTime": "02/Dec/2021:16:22:11 +0000",
+    "requestTimeEpoch": 1638462131,
+    "resourceId": "123456",
+    "resourcePath": "/students/me/tasks/{taskId}",
+    "stage": "Prod"
+  },
+  "resource": "/students/me/tasks/{taskId}",
+  "stageVariables": null,
+  "version": "1.0"
+}
